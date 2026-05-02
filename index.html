@@ -1,60 +1,138 @@
-<!-- Lógica y funcionalidad del sistema -->
+<!-- Mejora visual e indicador -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>IMC</title>
+
+<style>
+/* Diseño general */
+body {
+    font-family: Arial;
+    background: #2f5d5b;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Contenedor */
+.container {
+    background: #eaeaea;
+    padding: 25px;
+    border-radius: 10px;
+    width: 320px;
+}
+
+/* Inputs */
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+}
+
+/* Botón */
+button {
+    width: 100%;
+    padding: 10px;
+    background: #2f5d5b;
+    color: white;
+}
+
+/* Barra de estados */
+.bar {
+    display: flex;
+    margin-top: 15px;
+}
+
+/* Segmentos */
+.segment {
+    width: 16.66%;
+    height: 20px;
+}
+
+.bajo { background: #3498db; }
+.normal { background: #2ecc71; }
+.pre { background: #f1c40f; }
+.ob1 { background: #e67e22; }
+.ob2 { background: #e74c3c; }
+.ob3 { background: #8e44ad; }
+
+/* Indicador */
+.indicator {
+    position: absolute;
+    height: 30px;
+    width: 4px;
+    background: black;
+}
+</style>
+
 </head>
 <body>
 
-    <h1>Calculadora de IMC</h1>
+<div class="container">
 
-    <!-- Campos con identificadores -->
-    <input type="text" id="nombre" placeholder="Nombre">
-    <input type="text" id="peso" placeholder="Peso (kg)">
-    <input type="text" id="estatura" placeholder="Estatura (m)">
+<h2>Calculadora IMC</h2>
 
-    <!-- Botón con acción -->
-    <button onclick="calcularIMC()">Calcular</button>
+<input type="text" id="nombre" placeholder="Nombre">
+<input type="text" id="peso" placeholder="Peso (kg)">
+<input type="text" id="estatura" placeholder="Estatura (m)">
 
-    <p id="resultado"></p>
-    <p id="estado"></p>
+<button onclick="calcularIMC()">Calcular</button>
 
-    <script>
-    // Funcionalidad del botón
-    function calcularIMC() {
+<p id="resultado"></p>
+<p id="estado"></p>
 
-        let nombre = document.getElementById("nombre").value;
-        let peso = parseFloat(document.getElementById("peso").value);
-        let estatura = parseFloat(document.getElementById("estatura").value);
+<!-- Indicador visual -->
+<div class="bar">
+    <div class="segment bajo"></div>
+    <div class="segment normal"></div>
+    <div class="segment pre"></div>
+    <div class="segment ob1"></div>
+    <div class="segment ob2"></div>
+    <div class="segment ob3"></div>
+</div>
 
-        // Validación de datos
-        if (nombre === "" || isNaN(peso) || isNaN(estatura)) {
-            document.getElementById("resultado").innerText = "Datos inválidos";
-            return;
-        }
+<div class="indicator" id="indicador"></div>
 
-        // Cálculo IMC
-        let imc = peso / (estatura * estatura);
+</div>
 
-        let estado = "";
+<script>
+// Lógica + posición del indicador
+function calcularIMC() {
 
-        // Clasificación
-        if (imc < 18.5) estado = "Bajo peso";
-        else if (imc < 25) estado = "Peso normal";
-        else if (imc < 30) estado = "Pre-obesidad";
-        else if (imc < 35) estado = "Obesidad I";
-        else if (imc < 40) estado = "Obesidad II";
-        else estado = "Obesidad III";
+    let nombre = document.getElementById("nombre").value;
+    let peso = parseFloat(document.getElementById("peso").value);
+    let estatura = parseFloat(document.getElementById("estatura").value);
 
-        // Mostrar resultado
-        document.getElementById("resultado").innerText =
-            nombre + ", tu IMC es: " + imc.toFixed(2);
-
-        document.getElementById("estado").innerText =
-            "Estado: " + estado;
+    if (nombre === "" || isNaN(peso) || isNaN(estatura)) {
+        document.getElementById("resultado").innerText = "Datos inválidos";
+        return;
     }
-    </script>
+
+    let imc = peso / (estatura * estatura);
+
+    let estado = "";
+    let posicion = 0;
+
+    // Determinar estado y posición
+    if (imc < 18.5) { estado = "Bajo peso"; posicion = 16.66 * 0.5; }
+    else if (imc < 25) { estado = "Peso normal"; posicion = 16.66 * 1.5; }
+    else if (imc < 30) { estado = "Pre-obesidad"; posicion = 16.66 * 2.5; }
+    else if (imc < 35) { estado = "Obesidad I"; posicion = 16.66 * 3.5; }
+    else if (imc < 40) { estado = "Obesidad II"; posicion = 16.66 * 4.5; }
+    else { estado = "Obesidad III"; posicion = 16.66 * 5.5; }
+
+    document.getElementById("resultado").innerText =
+        nombre + ", tu IMC es: " + imc.toFixed(2);
+
+    document.getElementById("estado").innerText =
+        "Estado: " + estado;
+
+    // Mover indicador
+    document.getElementById("indicador").style.left = posicion + "%";
+}
+</script>
 
 </body>
 </html>
