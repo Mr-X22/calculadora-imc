@@ -1,14 +1,13 @@
-<!-- Mejora visual e indicador -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>IMC</title>
+<meta charset="UTF-8">
+<title>IMC OMS</title>
 
 <style>
-/* Diseño general */
+/* Mejora visual general del fondo y centrado de la aplicación */
 body {
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     background: #2f5d5b;
     display: flex;
     justify-content: center;
@@ -16,41 +15,91 @@ body {
     height: 100vh;
 }
 
-/* Contenedor */
+/* Contenedor principal con diseño tipo tarjeta y sombra */
 .container {
     background: #eaeaea;
     padding: 25px;
     border-radius: 10px;
-    width: 320px;
+    width: 340px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
-/* Inputs */
+/* Centrado del título para mejor presentación */
+h2 {
+    text-align: center;
+}
+
+/* Separación entre campos para mejor organización visual */
+.input-group {
+    margin-bottom: 15px;
+}
+
+/* Etiquetas más visibles */
+label {
+    font-weight: bold;
+}
+
+/* Mejora estética de los inputs */
 input {
     width: 100%;
     padding: 10px;
-    margin: 5px 0;
+    margin-top: 5px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
 }
 
-/* Botón */
+/* Botón estilizado */
 button {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     background: #2f5d5b;
     color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
 }
 
-/* Barra de estados */
-.bar {
-    display: flex;
+/* Efecto visual al pasar el mouse */
+button:hover {
+    background: #244746;
+}
+
+/* Resultado centrado y resaltado */
+#resultado {
     margin-top: 15px;
+    text-align: center;
+    font-weight: bold;
 }
 
-/* Segmentos */
+/* Estado con mayor énfasis visual */
+#estado {
+    text-align: center;
+    font-size: 16px;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* Indicador visual tipo barra (gauge) */
+.gauge {
+    margin-top: 20px;
+}
+
+/* Barra con bordes redondeados para mejor estética */
+.bar {
+    position: relative;
+    height: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+}
+
+/* División equitativa en 6 segmentos */
 .segment {
     width: 16.66%;
-    height: 20px;
+    height: 100%;
 }
 
+/* Colores definidos por categoría (mejora visual clara) */
 .bajo { background: #3498db; }
 .normal { background: #2ecc71; }
 .pre { background: #f1c40f; }
@@ -58,12 +107,15 @@ button {
 .ob2 { background: #e74c3c; }
 .ob3 { background: #8e44ad; }
 
-/* Indicador */
+/* Indicador animado que se mueve según el resultado */
 .indicator {
     position: absolute;
-    height: 30px;
+    top: -5px;
     width: 4px;
+    height: 30px;
     background: black;
+    left: 0%;
+    transition: 0.5s;
 }
 </style>
 
@@ -71,65 +123,113 @@ button {
 <body>
 
 <div class="container">
+    <h2>Calculadora IMC (OMS)</h2>
 
-<h2>Calculadora IMC</h2>
+    <!-- Campos organizados en grupos para mejor presentación -->
+    <div class="input-group">
+        <label>Nombre</label>
+        <input type="text" id="nombre" placeholder="Ej: Juan">
+    </div>
 
-<input type="text" id="nombre" placeholder="Nombre">
-<input type="text" id="peso" placeholder="Peso (kg)">
-<input type="text" id="estatura" placeholder="Estatura (m)">
+    <div class="input-group">
+        <label>Peso (kg)</label>
+        <input type="text" id="peso" placeholder="Ej: 70">
+    </div>
 
-<button onclick="calcularIMC()">Calcular</button>
+    <div class="input-group">
+        <label>Estatura (m)</label>
+        <input type="text" id="estatura" placeholder="Ej: 1.75">
+    </div>
 
-<p id="resultado"></p>
-<p id="estado"></p>
+    <button onclick="calcularIMC()">Calcular</button>
 
-<!-- Indicador visual -->
-<div class="bar">
-    <div class="segment bajo"></div>
-    <div class="segment normal"></div>
-    <div class="segment pre"></div>
-    <div class="segment ob1"></div>
-    <div class="segment ob2"></div>
-    <div class="segment ob3"></div>
-</div>
+    <p id="resultado"></p>
+    <p id="estado"></p>
 
-<div class="indicator" id="indicador"></div>
+    <!-- Indicador visual tipo barra -->
+    <div class="gauge">
+        <div class="bar">
+            <div class="segment bajo"></div>
+            <div class="segment normal"></div>
+            <div class="segment pre"></div>
+            <div class="segment ob1"></div>
+            <div class="segment ob2"></div>
+            <div class="segment ob3"></div>
 
+            <div class="indicator" id="indicador"></div>
+        </div>
+    </div>
 </div>
 
 <script>
-// Lógica + posición del indicador
+// Función principal del cálculo
 function calcularIMC() {
 
-    let nombre = document.getElementById("nombre").value;
-    let peso = parseFloat(document.getElementById("peso").value);
-    let estatura = parseFloat(document.getElementById("estatura").value);
+    let nombre = document.getElementById("nombre").value.trim();
+    let peso = document.getElementById("peso").value;
+    let estatura = document.getElementById("estatura").value;
 
-    if (nombre === "" || isNaN(peso) || isNaN(estatura)) {
-        document.getElementById("resultado").innerText = "Datos inválidos";
+    // Validación del nombre
+    if (nombre === "") {
+        document.getElementById("resultado").innerText = "Ingresa tu nombre";
+        document.getElementById("estado").innerText = "";
         return;
     }
 
+    peso = parseFloat(peso);
+    estatura = parseFloat(estatura);
+
+    // Validación de datos numéricos
+    if (isNaN(peso) || isNaN(estatura) || peso <= 0 || estatura <= 0) {
+        document.getElementById("resultado").innerText = "Datos inválidos";
+        document.getElementById("estado").innerText = "";
+        return;
+    }
+
+    // Cálculo del IMC
     let imc = peso / (estatura * estatura);
 
-    let estado = "";
+    let estadoTexto = "";
+    let color = "";
     let posicion = 0;
 
-    // Determinar estado y posición
-    if (imc < 18.5) { estado = "Bajo peso"; posicion = 16.66 * 0.5; }
-    else if (imc < 25) { estado = "Peso normal"; posicion = 16.66 * 1.5; }
-    else if (imc < 30) { estado = "Pre-obesidad"; posicion = 16.66 * 2.5; }
-    else if (imc < 35) { estado = "Obesidad I"; posicion = 16.66 * 3.5; }
-    else if (imc < 40) { estado = "Obesidad II"; posicion = 16.66 * 4.5; }
-    else { estado = "Obesidad III"; posicion = 16.66 * 5.5; }
+    // Determinación de categoría + color + posición visual
+    if (imc < 18.5) {
+        estadoTexto = "Bajo peso";
+        color = "#3498db";
+        posicion = 16.66 * 0.5;
+    } else if (imc < 25) {
+        estadoTexto = "Peso normal";
+        color = "#2ecc71";
+        posicion = 16.66 * 1.5;
+    } else if (imc < 30) {
+        estadoTexto = "Pre-obesidad";
+        color = "#f1c40f";
+        posicion = 16.66 * 2.5;
+    } else if (imc < 35) {
+        estadoTexto = "Obesidad clase I";
+        color = "#e67e22";
+        posicion = 16.66 * 3.5;
+    } else if (imc < 40) {
+        estadoTexto = "Obesidad clase II";
+        color = "#e74c3c";
+        posicion = 16.66 * 4.5;
+    } else {
+        estadoTexto = "Obesidad clase III";
+        color = "#8e44ad";
+        posicion = 16.66 * 5.5;
+    }
 
+    // Mostrar resultado
     document.getElementById("resultado").innerText =
         nombre + ", tu IMC es: " + imc.toFixed(2);
 
-    document.getElementById("estado").innerText =
-        "Estado: " + estado;
+    // Mostrar estado con color dinámico
+    let estado = document.getElementById("estado");
+    estado.innerText = nombre + ", estás en: " + estadoTexto;
+    estado.style.color = color;
 
-    // Mover indicador
+    // Movimiento del indicador visual
     document.getElementById("indicador").style.left = posicion + "%";
 }
 </script>
