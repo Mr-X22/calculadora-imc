@@ -5,7 +5,17 @@
 <title>IMC OMS</title>
 
 <style>
-/* Mejora visual general del fondo y centrado de la aplicación */
+/* 
+Mejoras generales realizadas:
+- Se amplió el ancho del recuadro para dar más espacio.
+- Se aumentó la altura de la barra de colores para mayor visibilidad.
+- Se ajustaron las etiquetas con tipografía más pequeña y flexbox, 
+  de modo que cada nombre quede exactamente debajo de su color.
+- Los cambios realizados se hicieron apartir de una prueba que se hizo
+  a un usuario, con el fin de ver su dificultad de uso en un momento
+  real y no imaginario.
+*/
+
 body {
     font-family: Arial, sans-serif;
     background: #2f5d5b;
@@ -15,31 +25,26 @@ body {
     height: 100vh;
 }
 
-/* Contenedor principal con diseño tipo tarjeta y sombra */
 .container {
     background: #eaeaea;
     padding: 25px;
     border-radius: 10px;
-    width: 340px;
+    width: 500px; /* Zona modificada: recuadro más ancho */
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
-/* Centrado del título para mejor presentación */
 h2 {
     text-align: center;
 }
 
-/* Separación entre campos para mejor organización visual */
 .input-group {
     margin-bottom: 15px;
 }
 
-/* Etiquetas más visibles */
 label {
     font-weight: bold;
 }
 
-/* Mejora estética de los inputs */
 input {
     width: 100%;
     padding: 10px;
@@ -48,7 +53,6 @@ input {
     border: 1px solid #ccc;
 }
 
-/* Botón estilizado */
 button {
     width: 100%;
     padding: 12px;
@@ -59,19 +63,16 @@ button {
     cursor: pointer;
 }
 
-/* Efecto visual al pasar el mouse */
 button:hover {
     background: #244746;
 }
 
-/* Resultado centrado y resaltado */
 #resultado {
     margin-top: 15px;
     text-align: center;
     font-weight: bold;
 }
 
-/* Estado con mayor énfasis visual */
 #estado {
     text-align: center;
     font-size: 16px;
@@ -79,27 +80,26 @@ button:hover {
     font-weight: bold;
 }
 
-/* Indicador visual tipo barra (gauge) */
+/* GAUGE */
 .gauge {
     margin-top: 20px;
+    width: 100%;
 }
 
-/* Barra con bordes redondeados para mejor estética */
 .bar {
     position: relative;
-    height: 20px;
-    border-radius: 10px;
+    height: 30px; /* Zona modificada: barra más alta */
+    border-radius: 12px;
     overflow: hidden;
     display: flex;
 }
 
-/* División equitativa en 6 segmentos */
 .segment {
     width: 16.66%;
     height: 100%;
 }
 
-/* Colores definidos por categoría (mejora visual clara) */
+/* Colores de cada categoría */
 .bajo { background: #3498db; }
 .normal { background: #2ecc71; }
 .pre { background: #f1c40f; }
@@ -107,15 +107,28 @@ button:hover {
 .ob2 { background: #e74c3c; }
 .ob3 { background: #8e44ad; }
 
-/* Indicador animado que se mueve según el resultado */
 .indicator {
     position: absolute;
     top: -5px;
     width: 4px;
-    height: 30px;
+    height: 40px; /* Zona modificada: indicador más largo */
     background: black;
     left: 0%;
     transition: 0.5s;
+}
+
+/* Zona modificada: etiquetas alineadas debajo de cada color */
+.labels {
+    display: flex;
+    margin-top: 10px;
+    font-size: 11px; /* Texto más pequeño */
+    font-weight: bold;
+}
+
+.labels span {
+    flex: 1; /* Cada etiqueta ocupa el mismo ancho que su segmento */
+    text-align: center;
+    line-height: 1.2;
 }
 </style>
 
@@ -125,7 +138,6 @@ button:hover {
 <div class="container">
     <h2>Calculadora IMC (OMS)</h2>
 
-    <!-- Campos organizados en grupos para mejor presentación -->
     <div class="input-group">
         <label>Nombre</label>
         <input type="text" id="nombre" placeholder="Ej: Juan">
@@ -146,7 +158,6 @@ button:hover {
     <p id="resultado"></p>
     <p id="estado"></p>
 
-    <!-- Indicador visual tipo barra -->
     <div class="gauge">
         <div class="bar">
             <div class="segment bajo"></div>
@@ -158,18 +169,25 @@ button:hover {
 
             <div class="indicator" id="indicador"></div>
         </div>
+
+        <!-- Etiquetas alineadas debajo de cada color -->
+        <div class="labels">
+            <span>Bajo peso</span>
+            <span>Peso normal</span>
+            <span>Pre‑obesidad</span>
+            <span>Obesidad I</span>
+            <span>Obesidad II</span>
+            <span>Obesidad III</span>
+        </div>
     </div>
 </div>
 
 <script>
-// Función principal del cálculo
 function calcularIMC() {
-
     let nombre = document.getElementById("nombre").value.trim();
     let peso = document.getElementById("peso").value;
     let estatura = document.getElementById("estatura").value;
 
-    // Validación del nombre
     if (nombre === "") {
         document.getElementById("resultado").innerText = "Ingresa tu nombre";
         document.getElementById("estado").innerText = "";
@@ -179,21 +197,18 @@ function calcularIMC() {
     peso = parseFloat(peso);
     estatura = parseFloat(estatura);
 
-    // Validación de datos numéricos
     if (isNaN(peso) || isNaN(estatura) || peso <= 0 || estatura <= 0) {
         document.getElementById("resultado").innerText = "Datos inválidos";
         document.getElementById("estado").innerText = "";
         return;
     }
 
-    // Cálculo del IMC
     let imc = peso / (estatura * estatura);
 
     let estadoTexto = "";
     let color = "";
     let posicion = 0;
 
-    // Determinación de categoría + color + posición visual
     if (imc < 18.5) {
         estadoTexto = "Bajo peso";
         color = "#3498db";
@@ -203,36 +218,36 @@ function calcularIMC() {
         color = "#2ecc71";
         posicion = 16.66 * 1.5;
     } else if (imc < 30) {
-        estadoTexto = "Pre-obesidad";
+        estadoTexto = "Pre‑obesidad";
         color = "#f1c40f";
         posicion = 16.66 * 2.5;
     } else if (imc < 35) {
-        estadoTexto = "Obesidad clase I";
+        estadoTexto = "Obesidad I";
         color = "#e67e22";
         posicion = 16.66 * 3.5;
     } else if (imc < 40) {
-        estadoTexto = "Obesidad clase II";
+        estadoTexto = "Obesidad II";
         color = "#e74c3c";
         posicion = 16.66 * 4.5;
     } else {
-        estadoTexto = "Obesidad clase III";
+        estadoTexto = "Obesidad III";
         color = "#8e44ad";
         posicion = 16.66 * 5.5;
     }
 
-    // Mostrar resultado
     document.getElementById("resultado").innerText =
         nombre + ", tu IMC es: " + imc.toFixed(2);
 
-    // Mostrar estado con color dinámico
     let estado = document.getElementById("estado");
     estado.innerText = nombre + ", estás en: " + estadoTexto;
     estado.style.color = color;
 
-    // Movimiento del indicador visual
     document.getElementById("indicador").style.left = posicion + "%";
 }
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
