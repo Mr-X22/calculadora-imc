@@ -1,4 +1,4 @@
-<!-- Estructura del proyecto -->
+<!-- Lógica y funcionalidad del sistema -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,15 +9,52 @@
 
     <h1>Calculadora de IMC</h1>
 
-    <!-- Campos de entrada -->
-    <input type="text" placeholder="Peso (kg)">
-    <input type="text" placeholder="Estatura (m)">
+    <!-- Campos con identificadores -->
+    <input type="text" id="nombre" placeholder="Nombre">
+    <input type="text" id="peso" placeholder="Peso (kg)">
+    <input type="text" id="estatura" placeholder="Estatura (m)">
 
-    <!-- Botón sin funcionalidad -->
-    <button>Calcular</button>
+    <!-- Botón con acción -->
+    <button onclick="calcularIMC()">Calcular</button>
 
-    <!-- Área de resultado -->
-    <p>Resultado aquí</p>
+    <p id="resultado"></p>
+    <p id="estado"></p>
+
+    <script>
+    // Funcionalidad del botón
+    function calcularIMC() {
+
+        let nombre = document.getElementById("nombre").value;
+        let peso = parseFloat(document.getElementById("peso").value);
+        let estatura = parseFloat(document.getElementById("estatura").value);
+
+        // Validación de datos
+        if (nombre === "" || isNaN(peso) || isNaN(estatura)) {
+            document.getElementById("resultado").innerText = "Datos inválidos";
+            return;
+        }
+
+        // Cálculo IMC
+        let imc = peso / (estatura * estatura);
+
+        let estado = "";
+
+        // Clasificación
+        if (imc < 18.5) estado = "Bajo peso";
+        else if (imc < 25) estado = "Peso normal";
+        else if (imc < 30) estado = "Pre-obesidad";
+        else if (imc < 35) estado = "Obesidad I";
+        else if (imc < 40) estado = "Obesidad II";
+        else estado = "Obesidad III";
+
+        // Mostrar resultado
+        document.getElementById("resultado").innerText =
+            nombre + ", tu IMC es: " + imc.toFixed(2);
+
+        document.getElementById("estado").innerText =
+            "Estado: " + estado;
+    }
+    </script>
 
 </body>
 </html>
